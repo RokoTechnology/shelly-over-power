@@ -4,7 +4,7 @@ import { error, log } from './log.js'
 
 async function handleEvent(params = {}) {
   try {
-    await log(params)
+    await log(JSON.stringify(params))
     return { ok: true }
   } catch (e) {
     error(e)
