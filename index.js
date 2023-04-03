@@ -23,6 +23,11 @@ async function init() {
     await db.read()
     db.data = db.data || { events: [] }
     ctx.set('db', db)
+    const myGot = got.extend({
+      responseType: 'json',
+      resolveBodyOnly: true
+    })
+    ctx.set('got', myGot)
   } catch (e) {
     log(e)
   }
