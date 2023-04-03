@@ -1,28 +1,60 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import cfg from './config.js'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { Low } from 'lowdb'
+import { JSONFile } from 'lowdb/node'
+
+import ctx from './context.js'
+import { log } from './util.js'
 import handleEvent from './event.js'
-import { log } from './log.js'
+import clean from './clean.js'
+import status from './status.js'
 
 
 const app = express()
 app.use(bodyParser.json())
 
-app.get('/', async (req, res) => {
-  log('received GET')
-  const result = await handleEvent(req.query)
-  res.send(result)
-  return
-})
+async function init() {
+  try {
+    const dirname = path.dirname(fileURLToPath(import.meta.url))
+    ctx.set('dirname', dirname)
+    const db = new Low(new JSONFile(path.join(dirname, 'db.json')))
+    await db.read()
+    db.data = db.data || { events: [] }
+    ctx.set('db', db)
+  } catch (e) {
+    log(e)
+  }
+}
 
-app.post('/', async (req, res) => {
-  log('received POST')
-  const result = await handleEvent(req.body)
-  res.send(result)
-  return
-})
+try {
+  app.all(['/', '/event'], async (req, res) => {
+    const payload = req.body || req.query || {}
+    log(`received ${req.method} request at /`)
+    const result = await handleEvent(payload)
+    res.send(result)
+    return
+  })
 
+  app.all('/clean', async (req, res) => {
+    const payload = req.body || req.query || {}
+    const result = await clean(payload)
+    res.send(result)
+    return
+  })
 
-app.listen(cfg.port, async () => {
-  log('Shelly Overload listening on port', cfg.port)
-})
+  app.all('/status', async (req, res) => {
+    const payload = req.body || req.query || {}
+    const result = await status(payload)
+    res.send(result)
+    return
+  })
+
+  app.listen(ctx.port, async () => {
+    await init()
+    log('Shelly OverPower listening on port', ctx.port)
+  })
+} catch (e) {
+  log(e)
+}

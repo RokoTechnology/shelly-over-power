@@ -1,10 +1,10 @@
-import cfg from './config.js'
-import { error, log } from './log.js'
+import ctx from './context.js'
+import { error, log, write } from './util.js'
 
 
 async function handleEvent(params = {}) {
   try {
-    await log(JSON.stringify(params))
+    await write(params)
     return { ok: true }
   } catch (e) {
     error(e)
