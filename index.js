@@ -4,6 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import { Low } from 'lowdb'
 import { JSONFile } from 'lowdb/node'
+import got from 'got'
 
 import ctx from './context.js'
 import { log } from './util.js'
