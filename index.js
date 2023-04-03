@@ -42,6 +42,14 @@ try {
     return
   })
 
+  app.all('/test', async (req, res) => {
+    const payload = req.body || req.query || {}
+    payload.isTest = true
+    const result = await handleEvent(payload)
+    res.send(result)
+    return
+  })
+
   app.all('/clean', async (req, res) => {
     const payload = req.body || req.query || {}
     const result = await clean(payload)
