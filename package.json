@@ -4,7 +4,10 @@
   "description": "This service listens to OverPower events from Shelly, stores them, and displays them.",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./index.js"
+    "dev": "nodemon ./index.js",
+    "check": "netstat -ln | grep 3333",
+    "start": "pm2 start ./index.js",
+    "restart": "pm2 restart all"
   },
   "keywords": [],
   "author": "",

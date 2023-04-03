@@ -7,7 +7,8 @@ import { error, log } from './util.js'
 async function clean(params = {}) {
   try {
     await fs.unlink(path.join(ctx.dirname, 'log.txt'))
-    await fs.unlink(path.join(ctx.dirname, 'db.json'))
+    ctx.db.data = { events: [] }
+    await ctx.db.write()
     return { ok: true }
   } catch (e) {
     error(e)
