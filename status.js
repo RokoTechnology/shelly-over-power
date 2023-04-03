@@ -5,7 +5,11 @@ import { error, log } from './util.js'
 async function status(params = {}) {
   try {
     const { events } = ctx.db.data
-    return events[events.length - 1]
+    let last = events[events.length - 1]
+    if (!last) {
+      last = { ok: true }
+    }
+    return last
   } catch (e) {
     error(e)
   }
